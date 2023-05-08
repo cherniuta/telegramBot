@@ -26,8 +26,8 @@ const (
 )
 
 // фу-ия будет создавать экземпляр структры client
-func New(host string, token string) Client {
-	return Client{
+func New(host string, token string) *Client {
+	return &Client{
 		host: host,
 		//могли бы написать "bot"+token,но вынесли в отдельную фу-ию, чтобы если что менять только одну ф-ию,а не все места,где есть токен
 		basePath: newBasePath(token),

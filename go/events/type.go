@@ -2,14 +2,14 @@ package events
 
 // создаем того, кто будет получать запросы
 // и того, кто будет их обрабатывать
-type Fatcher interface {
+type Fetcher interface {
 	//не передаем в этот метод offset, тк 1)разберемся с ним внутри
 	//2)в других отличных от tg сервисах может не быть такого параметра
 	Fetch(limit int) ([]Event, error)
 }
 
 type Processor interface {
-	Processor(e Event)
+	Process(e Event) error
 }
 
 type Type int

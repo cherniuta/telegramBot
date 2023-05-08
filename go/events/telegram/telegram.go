@@ -36,7 +36,7 @@ func New(client *telegram.Client, storage storage.Storage) *Processor {
 	}
 }
 
-func (p *Processor) Fatch(limit int) ([]events.Event, error) {
+func (p *Processor) Fetch(limit int) ([]events.Event, error) {
 	//с помощью клиента получаем все апдейты
 	updates, err := p.tg.Updates(p.offset, limit)
 	if err != nil {

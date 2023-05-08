@@ -12,17 +12,16 @@ import (
 	"time"
 )
 
-//тип, который будет реализовывать интерфейс
+// тип, который будет реализовывать интерфейс
 type Storage struct {
 	//нформация о том в какой папке будем его хранить
 	basePath string
 }
 
-//параметр доступа-у всех пользователей одинаковые права(чтение и запись)
+// параметр доступа-у всех пользователей одинаковые права(чтение и запись)
 const defaultPerm = 0774
 
-//ошибка если вайлов по указанному пути нет
-var ErrNoSavedPages = errors.New("no saved page")
+// ошибка если вайлов по указанному пути нет
 
 func New(basePath string) Storage {
 	return Storage{basePath: basePath}
@@ -72,7 +71,7 @@ func (s Storage) Save(page *storage.Page) (err error) {
 }
 
 func (s Storage) PickRandom(userName string) (page *storage.Page, err error) {
-	defer func() { err := e.WrapIfErr("can't pick random page", err) }()
+	defer func() { err = e.WrapIfErr("can't pick random page", err) }()
 
 	//получаем путь до директориис файлами
 	path := filepath.Join(s.basePath, userName)
@@ -86,7 +85,7 @@ func (s Storage) PickRandom(userName string) (page *storage.Page, err error) {
 	//если файлов нет(0), то возвращаем заранее определенную ошибку
 	//для того,чтобы ее можно ыбло прверить снаружи, выносим ее в переменную
 	if len(files) == 0 {
-		return nil, ErrNoSavedPages
+		return nil, storage.ErrNoSavedPages
 	}
 
 	//нужно получить случайное число от 0 и до номера последнего файла(если файлов 10, то 0-9)
@@ -102,7 +101,7 @@ func (s Storage) PickRandom(userName string) (page *storage.Page, err error) {
 	return s.decodePage(filepath.Join(path, file.Name()))
 }
 
-//Удаление ссылок
+// Удаление ссылок
 func (s Storage) Remove(p *storage.Page) error {
 	fileName, err := fileName(p)
 	if err != nil {
@@ -120,7 +119,7 @@ func (s Storage) Remove(p *storage.Page) error {
 	return nil
 }
 
-//Существует ли страница(сохранял ли пользователь ее ранее)
+// Существует ли страница(сохранял ли пользователь ее ранее)
 func (s Storage) IsExists(p *storage.Page) (bool, error) {
 	fileName, err := fileName(p)
 	if err != nil {
@@ -145,7 +144,7 @@ func (s Storage) IsExists(p *storage.Page) (bool, error) {
 	return true, nil
 }
 
-//декодируем файл
+// декодируем файл
 func (s Storage) decodePage(filePath string) (*storage.Page, error) {
 	//открфваем файл по пути
 	f, err := os.Open(filePath)
@@ -167,9 +166,9 @@ func (s Storage) decodePage(filePath string) (*storage.Page, error) {
 	return &p, nil
 }
 
-//Определяем имя файл с помощью хэша
-//выносим это все в одну функцию, чтобы если мы захотим изменить способ формирования хэша(например:дописывать расширение)
-//мы смогли поменять только одну функцию, а не все места ,где был хэщ
+// Определяем имя файл с помощью хэша
+// выносим это все в одну функцию, чтобы если мы захотим изменить способ формирования хэша(например:дописывать расширение)
+// мы смогли поменять только одну функцию, а не все места ,где был хэщ
 func fileName(p *storage.Page) (string, error) {
 	return p.Hash()
 }

@@ -2,6 +2,7 @@ package storage
 
 import (
 	"crypto/sha1"
+	"errors"
 	"fmt"
 	"go/lib/e"
 	"io"
@@ -24,7 +25,9 @@ type Storage interface {
 	IsExists(p *Page) (bool, error)
 }
 
-//наша страница(ссылка)
+var ErrNoSavedPages = errors.New("no saved page")
+
+// наша страница(ссылка)
 type Page struct {
 	//ссылка
 	URL string
@@ -32,7 +35,7 @@ type Page struct {
 	UserName string
 }
 
-//хешируем данные
+// хешируем данные
 func (p Page) Hash() (string, error) {
 	h := sha1.New()
 
